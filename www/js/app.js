@@ -118,10 +118,10 @@ define(function(require, exports, module) {
 	}
 
 	function triggerImageDownload(canvas) {
-		//        var alertContainer = d3.select("#alertContainer").style("display", "block").style("top", 0);
-		//        alertContainer.select("img").attr("src", canvas.toDataURL()).classed("allow-download", true);
-		console.log(canvas.toDataURL());
+		// var alertContainer = d3.select("#alertContainer").style("display", "block").style("top", 0);
+		// alertContainer.select("img").attr("src", canvas.toDataURL()).classed("allow-download", true);
 		canvas.toBlob(function(blob) {
+			//console.log(canvas.toDataURL());
 			saveAs(blob, "bingo.png");
 		}, "image/png");
 	}
@@ -432,7 +432,6 @@ define(function(require, exports, module) {
 			var file = event.target.files[0];
 			EXIF.getData(file, function() {
 				var orientation = EXIF.getTag(this, "Orientation");
-				//var imgStr = reader.result.toString();
 				var mpxImage = new MegaPixImage(file);
 				var canvas = document.createElement("canvas");
 				mpxImage.onrender = function(target) {
@@ -446,11 +445,6 @@ define(function(require, exports, module) {
 					orientation: orientation
 				});
 			});
-			var reader = new FileReader();
-			reader.onloadend = function() {
-
-			};
-			reader.readAsDataURL(file);
 		}
 	}
 
