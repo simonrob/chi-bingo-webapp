@@ -87,6 +87,9 @@ body {
         /* offset horizontal: half of image width and text area width */
     }
 }
+input{
+    position:absolute; top:-9999px; /* must not be display:none or visibility:hidden */
+}
 canvas {
     display: none;
 }
@@ -183,7 +186,11 @@ label {
     backface-visibility: hidden;
 }
 
-div.container {} 
+div.container {
+    width: 100%;
+    height: 100%
+    padding: 0;
+}
 
 div.row .tile {
     position: relative;

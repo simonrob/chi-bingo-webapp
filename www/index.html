@@ -21,7 +21,6 @@
     <head>
         <meta charset="utf-8" />
         <meta name="format-detection" content="telephone=no" />
-        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1" />
         <link rel="stylesheet" type="text/css" href="css/index.css" />
         <link rel="stylesheet" type="text/css" href="css/bootstrap.css"/>
@@ -31,40 +30,39 @@
         <div id="alertContainer">
             <img src="img/bingo.png"/>
         </div>
-        
         <div id="rowHighlighter" class="highlighter"></div>
         <div id="columnHighlighter" class="highlighter"></div>
         <div class="container">
             <div class="row">
-                <div id="box1" class="tile col-xs-4 col-sm-4 col-md-4">
+                <div id="box1" class="tile col-xs-4 col-sm-4 col-md-4 needsclick">
                     <span class="name"></span>
                 </div>
-                <div id="box2" class="tile col-xs-4 col-sm-4 col-md-4">
+                <div id="box2" class="tile col-xs-4 col-sm-4 col-md-4 needsclick">
                     <span class="name"></span>
                 </div>
-                <div id="box3" class="tile col-xs-4 col-sm-4 col-md-4">
-                    <span class="name"></span>
-                </div>
-            </div>
-            <div class="row">
-                <div id="box4" class="tile col-xs-4 col-sm-4">
-                    <span class="name"></span>
-                </div>
-                <div id="box5" class="tile col-xs-4 col-sm-4">
-                    <span class="name"></span>
-                </div>
-                <div id="box6" class="tile col-xs-4 col-sm-4">
+                <div id="box3" class="tile col-xs-4 col-sm-4 col-md-4 needsclick">
                     <span class="name"></span>
                 </div>
             </div>
             <div class="row">
-                <div id="box7" class="tile col-xs-4 col-sm-4">
+                <div id="box4" class="tile col-xs-4 col-sm-4 needsclick">
                     <span class="name"></span>
                 </div>
-                <div id="box8" class="tile col-xs-4 col-sm-4">
+                <div id="box5" class="tile col-xs-4 col-sm-4 needsclick">
                     <span class="name"></span>
                 </div>
-                <div id="box9" class="tile col-xs-4 col-sm-4">
+                <div id="box6" class="tile col-xs-4 col-sm-4 needsclick">
+                    <span class="name"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div id="box7" class="tile col-xs-4 col-sm-4 needsclick">
+                    <span class="name"></span>
+                </div>
+                <div id="box8" class="tile col-xs-4 col-sm-4 needsclick">
+                    <span class="name"></span>
+                </div>
+                <div id="box9" class="tile col-xs-4 col-sm-4 needsclick">
                     <span class="name"></span>
                 </div>
             </div>
@@ -73,36 +71,7 @@
                 <div class="btn" role="button" id="about">About <span class="glyphicon glyphicon-info-sign"></span> </div>
             </div>
         </div>
-        
-        
-<!--
-        <div class="animate-wrap">
-            <input type="radio" id="ani-1" name="animation" checked="true">
-                <input type="radio" id="ani-2" name="animation">
-                    
-                    <div class="animate">
-                        <label for="ani-2" class="front">
-                            <img src="background.png" width="220" height="220" alt="A photo of me.">
-                                </label>
-                        
-                        <label for="ani-1" class="back">
-                            <img src="alt.png" width="220" height="220" alt="Another photo of me.">
-                                </label>
-                    </div>
-        </div>
-
-        
-        <script>
-            if (!Modernizr.csstransforms3d) {
-                $('label').click(function() {
-                                 $('.animate .front').removeClass('front');
-                                 $(this).addClass('front');
-                                 });
-            }
-        </script>
-
--->
-        <script type="text/javascript" src="phonegap.js"></script>
+        <input type="file" accept="image/*" capture="camera" id="photo-capture">
         <script type="text/javascript" src="js/lib/jquery.js"></script>
         <script type="text/javascript" src="js/lib/promise-0.1.1.js"></script>
         <script type="text/javascript" src="js/lib/fastclick-1.0.0.js"></script>
