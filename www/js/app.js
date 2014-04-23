@@ -3,8 +3,8 @@
  * @author Patrick Oladimeji
  * @date 3/19/14 14:49:12 PM
  */
-/*jslint vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50, white:true */
-/*global define, d3, require, $, brackets, window, Camera, Promise, Touche, alert, FastClick */
+/*jslint vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50, white:true, eqeq: true */
+/*global define, d3, require, $, brackets, window, Camera, Promise, Touche, alert, FastClick, FileReader, EXIF, MegaPixImage */
 define(function(require, exports, module) {
 	"use strict";
 	var d3 = require("lib/d3"),
@@ -41,51 +41,8 @@ define(function(require, exports, module) {
 			"8": "258",
 			"9": "369"
 		};
-
-	function saveImage(base64) {
-		return new Promise(function(resolve, reject) {
-			var canvas = document.createElement("canvas");
-			var image = document.createElement("img");
-			image.onload = function() {
-				canvas.width = image.width;
-				canvas.height = image.height;
-				var context = canvas.getContext("2d");
-				context.drawImage(image, 0, 0);
-				// window.canvas2ImagePlugin.saveImageDataToLibrary(
-				// 	function(msg) {
-				// 		resolve(msg);
-				// 	},
-				// 	function(err) {
-				// 		reject(err);
-				// 	},
-				// 	canvas
-				// );
-				resolve("");
-			};
-			image.src = base64;
-		});
-	}
-
-	function resizeImage(base64, width) {
-		return new Promise(function(resolve, reject) {
-			var canvas = document.createElement("canvas");
-			var image = document.createElement("img");
-			image.onload = function() {
-				var context = canvas.getContext("2d");
-				var scale = width / image.width;
-				canvas.width = width;
-				canvas.height = image.height * scale;
-				console.log(scale);
-				context.scale(scale, scale);
-				context.drawImage(image, 0, 0);
-				resolve(canvas.toDataURL());
-			};
-			image.onerror = function(err) {
-				reject(err);
-			};
-			image.src = base64;
-		});
-	}
+	
+    
 	/**
 		Uses native alert to notify and falls back on html alert.
 	*/
@@ -161,6 +118,11 @@ define(function(require, exports, module) {
 		window.plugins.socialsharing.share(msg, null, imageData, null, success, error);
 	}
 
+    function triggerImageDownload(canvas) {
+//        var alertContainer = d3.select("#alertContainer").style("display", "block").style("top", 0);
+//        alertContainer.select("img").attr("src", canvas.toDataURL()).classed("allow-download", true);
+    }
+    
 	function renderImageAndShare(tiles) {
 		var canvas = document.createElement("canvas");
 		var context = canvas.getContext("2d");
@@ -225,7 +187,8 @@ define(function(require, exports, module) {
 					context.restore();
 				}
 				if (index === 8) {
-					share(canvas.toDataURL());
+					//share(canvas.toDataURL());
+                    triggerImageDownload(canvas);
 				}
 			});
 		}
@@ -419,24 +382,10 @@ define(function(require, exports, module) {
 			.style("display", "block");
 	}
 
-	function gotPicture(event) {
-		if (event.target.files.length == 1 && event.target.files[0].type.indexOf("image/") == 0) {
-			var file = event.target.files[0];
-			var reader = new FileReader();
-			reader.onloadend = function() {
-				onPhotoDataSuccess(reader.result.toString(), currentPhoto);
-				currentPhoto = "";
-			}
-			reader.readAsDataURL(file);
-		}
-	}
-
 	// Called when a photo is successfully retrieved
-	function onPhotoDataSuccess(imageData, gridNumber) {
+	function onPhotoDataSuccess(imageData, gridNumber, orientation) {
 		var n = +gridNumber.substr(3),
 			tiles, sel;
-		// set the image data as background of the div
-		saveImage(imageData).then(function(msg) {
 			updateImage(gridNumber, imageData);
 			db.set(gridNumber + "image", imageData);
 
@@ -473,10 +422,31 @@ define(function(require, exports, module) {
 						showImageAlert("img/line.png", hideAlert);
 					});
 			}
-		}, function(err) {
-			console.log(err);
-		});
-
+	}
+    
+    function gotPicture(event) {
+		if (event.target.files.length == 1 && event.target.files[0].type.indexOf("image/") == 0) {
+			var file = event.target.files[0];
+            EXIF.getData(file, function () {
+                var orientation = EXIF.getTag(this, "Orientation");
+                //var imgStr = reader.result.toString();
+                var mpxImage = new MegaPixImage(file);
+                var canvas = document.createElement("canvas");
+                mpxImage.onrender = function (target) {
+                    console.log(target);
+                    onPhotoDataSuccess(target.toDataURL(), currentPhoto, orientation);
+                    currentPhoto = "";
+                };
+                mpxImage.render(canvas, {maxWidth: imageWidth, maxHeight: imageHeight, orientation: orientation});
+                
+            });
+			var reader = new FileReader();
+			reader.onloadend = function() {
+                
+				
+			};
+			reader.readAsDataURL(file);
+		}
 	}
 
 	/**
