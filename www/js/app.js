@@ -12,11 +12,11 @@ define(function(require, exports, module) {
 		currentPhoto = "",
 		tileHeight,
 		tileWidth,
-		imageWidth = 500,
+		imageWidth = 250,
 		bottomToolbarHeight = 40,
 		width,
 		height,
-		imageHeight = 500,
+		imageHeight = 250,
 		imageQuality = 80,
 		aboutText = "CHI Bingo is a fun app that aims to increase social activity at CHI. The aim is simple - before the conference, enter 9 names of people you wish to talk to then the race is on to get 'selfie' photos with each of them before the week ends. Simple! Once you're done you can share your 9x9 grid with others! Researchers at the FIT Lab in Swansea University developed the app, but we can't take all the credit. The late Gary Marsden - a CHI veteran and dear friend - was the inspiration behind the concept. We wish to honour his achievement into the CHI academy this year and welcome his wife Gil who is here in Toronto to accept his award.",
 		rowsMap = {
@@ -41,8 +41,7 @@ define(function(require, exports, module) {
 			"8": "258",
 			"9": "369"
 		};
-	
-    
+
 	/**
 		Uses native alert to notify and falls back on html alert.
 	*/
@@ -118,11 +117,15 @@ define(function(require, exports, module) {
 		window.plugins.socialsharing.share(msg, null, imageData, null, success, error);
 	}
 
-    function triggerImageDownload(canvas) {
-//        var alertContainer = d3.select("#alertContainer").style("display", "block").style("top", 0);
-//        alertContainer.select("img").attr("src", canvas.toDataURL()).classed("allow-download", true);
-    }
-    
+	function triggerImageDownload(canvas) {
+		//        var alertContainer = d3.select("#alertContainer").style("display", "block").style("top", 0);
+		//        alertContainer.select("img").attr("src", canvas.toDataURL()).classed("allow-download", true);
+		console.log(canvas.toDataURL());
+		canvas.toBlob(function(blob) {
+			saveAs(blob, "bingo.png");
+		}, "image/png");
+	}
+
 	function renderImageAndShare(tiles) {
 		var canvas = document.createElement("canvas");
 		var context = canvas.getContext("2d");
@@ -188,7 +191,7 @@ define(function(require, exports, module) {
 				}
 				if (index === 8) {
 					//share(canvas.toDataURL());
-                    triggerImageDownload(canvas);
+					triggerImageDownload(canvas);
 				}
 			});
 		}
@@ -386,64 +389,66 @@ define(function(require, exports, module) {
 	function onPhotoDataSuccess(imageData, gridNumber, orientation) {
 		var n = +gridNumber.substr(3),
 			tiles, sel;
-			updateImage(gridNumber, imageData);
-			db.set(gridNumber + "image", imageData);
+		updateImage(gridNumber, imageData);
+		db.set(gridNumber + "image", imageData);
 
-			function hideAlert() {
-				d3.selectAll("#alertContainer").style("display", "none");
-			}
-			//check if bingo is complete, if so celebrate
-			if (getCompletedTiles().length === 9) {
-				celebrate();
-			} else if (cornerCompleted(gridNumber)) {
-				tiles = ["#box1", "#box3", "#box7", "#box9"];
-				sel = tiles.join(",");
-				d3.selectAll(sel).classed("unflip", false);
-				addClassToTiles(sel, "flip")
-					.then(function() {
-						addClassToTiles(tiles.reverse().join(","), "unflip")
-							.then(function() {
-								d3.selectAll(sel).classed("flip", false);
-							});
-						showImageAlert("img/corners.png", hideAlert);
-					});
-			} else if (rowCompleted(gridNumber)) {
-				tiles = rowsMap[n].split("").map(function(d) {
-					return "#box" + d;
+		function hideAlert() {
+			d3.selectAll("#alertContainer").style("display", "none");
+		}
+		//check if bingo is complete, if so celebrate
+		if (getCompletedTiles().length === 9) {
+			celebrate();
+		} else if (cornerCompleted(gridNumber)) {
+			tiles = ["#box1", "#box3", "#box7", "#box9"];
+			sel = tiles.join(",");
+			d3.selectAll(sel).classed("unflip", false);
+			addClassToTiles(sel, "flip")
+				.then(function() {
+					addClassToTiles(tiles.reverse().join(","), "unflip")
+						.then(function() {
+							d3.selectAll(sel).classed("flip", false);
+						});
+					showImageAlert("img/corners.png", hideAlert);
 				});
-				sel = tiles.join(",");
-				d3.selectAll(sel).classed("unflip", false);
-				addClassToTiles(sel, "flip")
-					.then(function() {
-						addClassToTiles(tiles.reverse().join(","), "unflip")
-							.then(function() {
-								d3.selectAll(sel).classed("flip", false);
-							});
-						showImageAlert("img/line.png", hideAlert);
-					});
-			}
+		} else if (rowCompleted(gridNumber)) {
+			tiles = rowsMap[n].split("").map(function(d) {
+				return "#box" + d;
+			});
+			sel = tiles.join(",");
+			d3.selectAll(sel).classed("unflip", false);
+			addClassToTiles(sel, "flip")
+				.then(function() {
+					addClassToTiles(tiles.reverse().join(","), "unflip")
+						.then(function() {
+							d3.selectAll(sel).classed("flip", false);
+						});
+					showImageAlert("img/line.png", hideAlert);
+				});
+		}
 	}
-    
-    function gotPicture(event) {
+
+	function gotPicture(event) {
 		if (event.target.files.length == 1 && event.target.files[0].type.indexOf("image/") == 0) {
 			var file = event.target.files[0];
-            EXIF.getData(file, function () {
-                var orientation = EXIF.getTag(this, "Orientation");
-                //var imgStr = reader.result.toString();
-                var mpxImage = new MegaPixImage(file);
-                var canvas = document.createElement("canvas");
-                mpxImage.onrender = function (target) {
-                    console.log(target);
-                    onPhotoDataSuccess(target.toDataURL(), currentPhoto, orientation);
-                    currentPhoto = "";
-                };
-                mpxImage.render(canvas, {maxWidth: imageWidth, maxHeight: imageHeight, orientation: orientation});
-                
-            });
+			EXIF.getData(file, function() {
+				var orientation = EXIF.getTag(this, "Orientation");
+				//var imgStr = reader.result.toString();
+				var mpxImage = new MegaPixImage(file);
+				var canvas = document.createElement("canvas");
+				mpxImage.onrender = function(target) {
+					console.log(target);
+					onPhotoDataSuccess(target.toDataURL(), currentPhoto, orientation);
+					currentPhoto = "";
+				};
+				mpxImage.render(canvas, {
+					maxWidth: imageWidth,
+					maxHeight: imageHeight,
+					orientation: orientation
+				});
+			});
 			var reader = new FileReader();
 			reader.onloadend = function() {
-                
-				
+
 			};
 			reader.readAsDataURL(file);
 		}
