@@ -119,8 +119,9 @@ define(function(require, exports, module) {
 	}
 
     function triggerImageDownload(canvas) {
-//        var alertContainer = d3.select("#alertContainer").style("display", "block").style("top", 0);
-//        alertContainer.select("img").attr("src", canvas.toDataURL()).classed("allow-download", true);
+        var alertContainer = d3.select("#alertContainer").style("display", "block").style("top", 0);
+        alertContainer.select("img").attr("src", canvas.toDataURL()).attr("width", canvas.width)
+            .attr("height", canvas.height).classed("allow-download", true);
     }
     
 	function renderImageAndShare(tiles) {
