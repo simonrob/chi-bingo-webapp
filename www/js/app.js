@@ -3,8 +3,8 @@
  * @author Patrick Oladimeji
  * @date 3/19/14 14:49:12 PM
  */
-/*jslint vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50, white:true, eqeq: true */
-/*global define, d3, require, $, brackets, window, Camera, Promise, Touche, alert, FastClick, FileReader, EXIF, MegaPixImage */
+/*jslint vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50, white:true, eqeq: true, unparam: false */
+/*global define, d3, require, $, brackets, window, Camera, Promise, Touche, alert, FastClick, EXIF, MegaPixImage */
 define(function(require, exports, module) {
 	"use strict";
 	var d3 = require("lib/d3"),
@@ -12,7 +12,7 @@ define(function(require, exports, module) {
 		currentPhoto = "",
 		tileHeight,
 		tileWidth,
-		imageWidth = 250,
+		imageWidth = 600,
 		bottomToolbarHeight = 40,
 		width,
 		height,
@@ -114,119 +114,12 @@ define(function(require, exports, module) {
 		});
 		var verb = people.length > 1 ? " are " : " is ";
 		var msg = names + verb + "in my #chi2014 Bingo";
-		window.plugins.socialsharing.share(msg, null, imageData, null, success, error);
-	}
-
-	function triggerImageDownload(canvas) {
-		// var alertContainer = d3.select("#alertContainer").style("display", "block").style("top", 0);
-		// alertContainer.select("img").attr("src", canvas.toDataURL()).classed("allow-download", true);
-		canvas.toBlob(function(blob) {
-			//console.log(canvas.toDataURL());
-			saveAs(blob, "bingo.png");
-		}, "image/png");
-	}
-
-	function renderImageAndShare(tiles) {
-		var canvas = document.createElement("canvas");
-		var context = canvas.getContext("2d");
-
-		var images = [];
-
-		function render(tiles) {
-			// calculate grid dimension to get the right size for rendering final canvas
-			// if there is no image on tile use zero tile dimensions
-			var dimensions = tiles.map(function(tile, index, tiles) {
-				return tile.image ? {
-					width: tileWidth,
-					height: tile.image.height * tileWidth / tile.image.width
-				} : {
-					width: 0,
-					height: 0
-				};
-			});
-			//fold the dimensions into rows of three
-			var rows = dimensions.reduce(function(p, c, i, arr) {
-				var r = p[p.length - 1];
-				if (r.length < 3) {
-					r.push(c);
-				} else {
-					p.push([c]);
-				}
-				return p;
-			}, [
-				[]
-			]);
-			console.log(JSON.stringify(rows));
-			var rowHeights = rows.map(function(d) {
-				return d3.max(d.map(function(e) {
-					return e.height;
-				})) || tileHeight;
-			});
-
-			var maxW = tileWidth; // (since we are fitting the image to the width of the tile)
-			// set the size of the canvas based on the tile size
-			canvas.width = maxW * 3;
-			canvas.height = rowHeights[0] + rowHeights[1] + rowHeights[2];
-			context.fillStyle = "white";
-			context.fillRect(0, 0, canvas.width, canvas.height);
-
-			tiles.forEach(function(tile, index) {
-				var colIndex = index % 3,
-					rowIndex = Math.floor(index / 3),
-					x = colIndex * maxW,
-					y = rowHeights.slice(0, rowIndex).reduce(function(a, b) {
-						return a + b;
-					}, 0);
-				if (tile.image) {
-					context.drawImage(tile.image, x, y, maxW, dimensions[index].height);
-				} else {
-					// just render a white background with the name?
-					context.save();
-					context.textAlign = "center";
-					context.fillStyle = "white";
-					context.fillRect(x, y, dimensions[index].width, dimensions[index].height);
-					context.fillStyle = "black";
-					context.fillText(tile.name || "?", x + maxW / 2, y + rowHeights[rowIndex] / 2, maxW);
-					context.restore();
-				}
-				if (index === 8) {
-					//share(canvas.toDataURL());
-					triggerImageDownload(canvas);
-				}
-			});
-		}
-
-		function loadImage(tile) {
-			return new Promise(function(resolve, reject) {
-				var img = new Image();
-				if (tile.image) {
-					img.onload = function() {
-						resolve({
-							name: tile.name,
-							image: img
-						});
-					};
-					img.onerror = function(event) {
-						reject(event);
-					};
-					img.src = tile.image;
-				} else {
-					resolve({
-						name: tile.name
-					});
-				}
-			});
-		}
-		Promise.all(tiles.map(function(tile) {
-			return loadImage(tile);
-		})).then(function(tiles) {
-			render(tiles);
-		}, function(err) {
-			_alert(JSON.stringify(err), "Error");
-		});
-	}
-
-	/**
+        
+        var a = document.createElement("a");
+        a.setAttribute("href", "bingo.html");
+        a.click();
+    }
+    /**
         Returns a list of all nine tiles on the board
         returns [{name:string, image:string}]
     */
@@ -518,12 +411,12 @@ define(function(require, exports, module) {
 			//event.stopPropagation();
 			var tiles = getCompletedTiles();
 			if (tiles.length === 9) {
-				renderImageAndShare(tiles);
+				share();
 			} else {
 				_confirm("Are you sure you don't want to get a full house before sharing?", function(continueSharing) {
 					if (continueSharing) {
-						renderImageAndShare(getAllTiles());
-					}
+                        share();
+                    }
 				}, "Share your image", "Share anyway", "Ok, I'll wait");
 			}
 		});

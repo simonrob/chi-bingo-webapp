@@ -26,6 +26,8 @@ img.allow-download {
     -webkit-touch-callout: default!important;
     pointer-events: all;
 }
+
+
 body {
     -webkit-touch-callout: none;
     /* prevent callout to copy image, etc when tap to hold */
