@@ -100,26 +100,12 @@ define(function(require, exports, module) {
 		function error(err) {
 			_alert(err, "Sharing error");
 		}
-		var people = d3.range(1, 10).map(function(d) {
-			return db.get("box" + d + "name");
-		}).filter(function(d) {
-			return d;
-		});
-		var names = people.reduce(function(previous, current, index, array) {
-			var sep = ", ";
-			if (index === array.length - 1) {
-				sep = " and ";
-			}
-			return previous ? previous.concat(sep).concat(current) : current;
-		});
-		var verb = people.length > 1 ? " are " : " is ";
-		var msg = names + verb + "in my #chi2014 Bingo";
-        
-        var a = document.createElement("a");
-        a.setAttribute("href", "bingo.html");
-        a.click();
-    }
-    /**
+
+		var a = document.createElement("a");
+		a.setAttribute("href", "bingo.html");
+		a.click();
+	}
+	/**
         Returns a list of all nine tiles on the board
         returns [{name:string, image:string}]
     */
@@ -415,8 +401,8 @@ define(function(require, exports, module) {
 			} else {
 				_confirm("Are you sure you don't want to get a full house before sharing?", function(continueSharing) {
 					if (continueSharing) {
-                        share();
-                    }
+						share();
+					}
 				}, "Share your image", "Share anyway", "Ok, I'll wait");
 			}
 		});
