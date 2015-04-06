@@ -4,11 +4,11 @@
  * @date 3/19/14 14:49:12 PM
  */
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50, white:true, eqeq: true, unparam: false */
-/*global define, d3, require, $, brackets, window, Camera, Promise, Touche, alert, FastClick, EXIF, MegaPixImage */
-define(function(require, exports, module) {
+/*global define, d3, require, $, brackets, window, Promise, alert, FastClick, EXIF, MegaPixImage */
+define(function(requires, exports, module) {
 	"use strict";
-	var d3 = require("lib/d3"),
-		db = require("Storage"),
+	var d3 = require("lib/d3.min"),
+		db = require("Storage.min"),
 		currentPhoto = "",
 		tileHeight,
 		tileWidth,
@@ -18,7 +18,7 @@ define(function(require, exports, module) {
 		height,
 		imageHeight = 250,
 		imageQuality = 80,
-		aboutText = "CHI Bingo is a fun app that aims to increase social activity at CHI. The aim is simple - before the conference, enter 9 names of people you wish to talk to then the race is on to get 'selfie' photos with each of them before the week ends. Simple! Once you're done you can share your 9x9 grid with others! Researchers at the FIT Lab in Swansea University developed the app, but we can't take all the credit. The late Gary Marsden - a CHI veteran and dear friend - was the inspiration behind the concept. We wish to honour his achievement into the CHI academy this year and welcome his wife Gil who is here in Toronto to accept his award.",
+		aboutText = "CHI Bingo is a fun app that aims to increase social activity at CHI.\n\nThe aim is simple — before the conference, enter nine names of people you wish to talk to. When you arrive, the race is on to get 'selfie' photos with each of them before the conference ends. Easy!\n\nOnce you're done you can share your 9x9 grid with others.\n\nCHI Bingo was inspired by the late Gary Marsden — a CHI veteran and dear friend.",
 		rowsMap = {
 			"1": "123",
 			"2": "123",
@@ -98,7 +98,7 @@ define(function(require, exports, module) {
 		}
 
 		function error(err) {
-			_alert(err, "Sharing error");
+			_alert(err, "Oops – sharing encountered an error. Please try again...");
 		}
 
 		var a = document.createElement("a");
@@ -399,7 +399,7 @@ define(function(require, exports, module) {
 			if (tiles.length === 9) {
 				share();
 			} else {
-				_confirm("Are you sure you don't want to get a full house before sharing?", function(continueSharing) {
+				_confirm("You haven't got a full house yet – share anyway?", function(continueSharing) {
 					if (continueSharing) {
 						share();
 					}

@@ -5,7 +5,7 @@
  */
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50 */
 /*global define, d3, require, $, brackets, window, MouseEvent, Promise */
-require(["lib/d3", "Storage"], function(d3, db) {
+require(["lib/d3.min", "Storage.min"], function(d3, db) {
 	"use strict";
 	var currentPhoto = "",
 		tileHeight,
@@ -70,7 +70,7 @@ require(["lib/d3", "Storage"], function(d3, db) {
 			return previous ? previous.concat(sep).concat(current) : current;
 		});
 		var verb = people.length > 1 ? " are " : " is ";
-		var msg = names + verb + "in my %23chi2014 Bingo";
+		var msg = names + verb + "in my %23chi2015 Bingo";
         msg = "https://twitter.com/intent/tweet?text=" + msg;
 		message.attr("href", msg);
 	}
