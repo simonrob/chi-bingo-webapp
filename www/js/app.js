@@ -94,7 +94,7 @@ define(function(requires, exports, module) {
 
 	function share(imageData) {
 		function success(msg) {
-			console.log(msg ? "Successfully shared image" : "Some problem sharing. ..");
+			//console.log(msg ? "Successfully shared image" : "Some problem sharing...");
 		}
 
 		function error(err) {
@@ -179,7 +179,7 @@ define(function(requires, exports, module) {
 		alertContainer.style("display", "block").style("top", "-" + (tileWidth * 3) + "px").on("click", null);
 		var img = d3.select("#alertContainer img").attr("src", src).style("width", (tileWidth * 3) + "px");
 		//img.classed("rotate-text", true);
-		console.log("top is " + top);
+		// console.log("top is " + top);
 		//default behaviour is that image is removed when user clicks on it.
 		alertContainer.on("click", function() {
 			alertContainer.transition().duration(500).style("top", "-1300px")
@@ -203,7 +203,7 @@ define(function(requires, exports, module) {
 	}
 
 	function celebrate() {
-		console.log("done - bingo!");
+		//console.log("done - bingo!");
 		d3.selectAll(".tile").classed("unflip", false);
 		var p = addClassToTiles(".tile", "flip");
 		p.then(function() {
@@ -272,7 +272,9 @@ define(function(requires, exports, module) {
 		db.set(gridNumber + "image", imageData);
 
 		function hideAlert() {
-			d3.selectAll("#alertContainer").style("display", "none");
+			setTimeout(function() {
+				d3.selectAll("#alertContainer").style("display", "none");
+			}, 750);
 		}
 		//check if bingo is complete, if so celebrate
 		if (getCompletedTiles().length === 9) {
@@ -314,7 +316,7 @@ define(function(requires, exports, module) {
 				var mpxImage = new MegaPixImage(file);
 				var canvas = document.createElement("canvas");
 				mpxImage.onrender = function(target) {
-					console.log(target);
+					//console.log(target);
 					onPhotoDataSuccess(target.toDataURL(), currentPhoto, orientation);
 					currentPhoto = "";
 				};
