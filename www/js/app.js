@@ -18,7 +18,7 @@ define(function(requires, exports, module) {
 		height,
 		imageHeight = 250,
 		imageQuality = 80,
-		aboutText = "CHI Bingo is a fun app that aims to increase social activity at CHI.\n\nThe aim is simple — before the conference, enter nine names of people you wish to talk to. When you arrive, the race is on to get 'selfie' photos with each of them before the conference ends. Easy!\n\nOnce you're done you can share your 9x9 grid with others.\n\nCHI Bingo was inspired by the late Gary Marsden — a CHI veteran and dear friend.",
+		aboutText = "CHI Bingo is a fun app that aims to increase social activity at CHI.\n\nThe aim is simple — before (or during) the conference, enter nine names of people you'd like to talk to. When you arrive, the race is on to get 'selfie' photos with each of them before the conference ends. Easy!\n\nOnce your grid is complete, you can share it with others.\n\n\nCHI Bingo was inspired by the late Gary Marsden — a CHI veteran and dear friend.",
 		rowsMap = {
 			"1": "123",
 			"2": "123",
@@ -433,7 +433,7 @@ define(function(requires, exports, module) {
 		});
 	}
 
-	var app = {
+	var app = {		
 		// Application Constructor
 		initialize: function() {
 			this.bindEvents();

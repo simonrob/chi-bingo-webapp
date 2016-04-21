@@ -5,7 +5,7 @@
  */
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50 */
 /*global define, d3, require, $, brackets, window, MouseEvent, Promise */
-require(["lib/d3.min", "Storage.min"], function(d3, db) {
+require(["lib/d3.min", "Storage.min"], function (d3, db) {
 	"use strict";
 	var currentPhoto = "",
 		tileHeight,
@@ -54,24 +54,29 @@ require(["lib/d3.min", "Storage.min"], function(d3, db) {
 		}
 
 		bingo.attr("src", base64);
-        bingo.attr("class", "allow-download");
+		bingo.attr("class", "allow-download");
 
-        var message = d3.select("a#message");
-		var people = d3.range(1, 10).map(function(d) {
+		var people = d3.range(1, 10).map(function (d) {
 			return db.get("box" + d + "name");
-		}).filter(function(d) {
+		}).filter(function (d) {
 			return d;
 		});
-		var names = people.reduce(function(previous, current, index, array) {
-			var sep = ", ";
-			if (index === array.length - 1) {
-				sep = " and ";
-			}
-			return previous ? previous.concat(sep).concat(current) : current;
-		});
-		var verb = people.length > 1 ? " are " : " is ";
-		var msg = names + verb + "in my %23chi2015 Bingo";
-        msg = "https://twitter.com/intent/tweet?text=" + msg;
+
+		var msg = "Just about to start my %23chi2016 %23bingo!"
+		if (people.length > 0) {
+			var names = people.reduce(function (previous, current, index, array) {
+				var sep = ", ";
+				if (index === array.length - 1) {
+					sep = " and ";
+				}
+				return previous ? previous.concat(sep).concat(current) : current;
+			});
+			var verb = people.length > 1 ? " are " : " is ";
+			msg = names + verb + "in my %23chi2016 %23bingo";
+		}
+		msg = "https://twitter.com/intent/tweet?text=" + msg.replace(" ", "%20");
+
+		var message = d3.select("a#message");
 		message.attr("href", msg);
 	}
 
@@ -84,7 +89,7 @@ require(["lib/d3.min", "Storage.min"], function(d3, db) {
 		function render(tiles) {
 			// calculate grid dimension to get the right size for rendering final canvas
 			// if there is no image on tile use zero tile dimensions
-			var dimensions = tiles.map(function(tile, index, tiles) {
+			var dimensions = tiles.map(function (tile, index, tiles) {
 				return tile.image ? {
 					width: tileWidth,
 					height: tile.image.height * tileWidth / tile.image.width
@@ -94,7 +99,7 @@ require(["lib/d3.min", "Storage.min"], function(d3, db) {
 				};
 			});
 			//fold the dimensions into rows of three
-			var rows = dimensions.reduce(function(p, c, i, arr) {
+			var rows = dimensions.reduce(function (p, c, i, arr) {
 				var r = p[p.length - 1];
 				if (r.length < 3) {
 					r.push(c);
@@ -106,8 +111,8 @@ require(["lib/d3.min", "Storage.min"], function(d3, db) {
 				[]
 			]);
 			console.log(JSON.stringify(rows));
-			var rowHeights = rows.map(function(d) {
-				return d3.max(d.map(function(e) {
+			var rowHeights = rows.map(function (d) {
+				return d3.max(d.map(function (e) {
 					return e.height;
 				})) || tileHeight;
 			});
@@ -119,11 +124,11 @@ require(["lib/d3.min", "Storage.min"], function(d3, db) {
 			context.fillStyle = "white";
 			context.fillRect(0, 0, canvas.width, canvas.height);
 
-			tiles.forEach(function(tile, index) {
+			tiles.forEach(function (tile, index) {
 				var colIndex = index % 3,
 					rowIndex = Math.floor(index / 3),
 					x = colIndex * maxW,
-					y = rowHeights.slice(0, rowIndex).reduce(function(a, b) {
+					y = rowHeights.slice(0, rowIndex).reduce(function (a, b) {
 						return a + b;
 					}, 0);
 				if (tile.image) {
@@ -145,16 +150,16 @@ require(["lib/d3.min", "Storage.min"], function(d3, db) {
 		}
 
 		function loadImage(tile) {
-			return new Promise(function(resolve, reject) {
+			return new Promise(function (resolve, reject) {
 				var img = new Image();
 				if (tile.image) {
-					img.onload = function() {
+					img.onload = function () {
 						resolve({
 							name: tile.name,
 							image: img
 						});
 					};
-					img.onerror = function(event) {
+					img.onerror = function (event) {
 						reject(event);
 					};
 					img.src = tile.image;
@@ -165,11 +170,11 @@ require(["lib/d3.min", "Storage.min"], function(d3, db) {
 				}
 			});
 		}
-		Promise.all(tiles.map(function(tile) {
+		Promise.all(tiles.map(function (tile) {
 			return loadImage(tile);
-		})).then(function(tiles) {
+		})).then(function (tiles) {
 			render(tiles);
-		}, function(err) {
+		}, function (err) {
 			_alert(JSON.stringify(err), "Error");
 		});
 	}
@@ -180,7 +185,7 @@ require(["lib/d3.min", "Storage.min"], function(d3, db) {
     */
 	function getAllTiles() {
 		// get the tiles saved in the store and filter any non truthy values (ie those that are undefined or null)
-		var tiles = d3.range(1, 10).map(function(d) {
+		var tiles = d3.range(1, 10).map(function (d) {
 			var imageKey = "box" + d + "image",
 				nameKey = "box" + d + "name";
 			return {
