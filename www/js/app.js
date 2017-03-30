@@ -174,7 +174,8 @@ define(function(requires, exports, module) {
 	}
 
 	function showImageAlert(src, cb) {
-		var top = (document.documentElement.clientHeight - tileWidth * 3) / 2; //using tileWidth because we are scaling the bingo image to the screen width and the image is a square
+		// using tileWidth because we are scaling the bingo image to the screen width and the image is a square
+		var top = (document.documentElement.clientHeight - tileWidth * 3) / 2;
 		var alertContainer = d3.select("#alertContainer");
 		alertContainer.style("display", "block").style("top", "-" + (tileWidth * 3) + "px").on("click", null);
 		var img = d3.select("#alertContainer img").attr("src", src).style("width", (tileWidth * 3) + "px");
@@ -211,9 +212,7 @@ define(function(requires, exports, module) {
 		});
 	}
 
-	/**
-        checks if a row has been completed
-    */
+	// checks if a row has been completed
 	function rowCompleted(gridNumber) {
 		var n = +gridNumber.substr(3);
 
@@ -222,9 +221,8 @@ define(function(requires, exports, module) {
 		});
 		return !incomplete;
 	}
-	/**
-    checks if a column has been completed
-    */
+	
+	// checks if a column has been completed
 	function columnCompleted(gridNumber) {
 		var n = +gridNumber.substr(3);
 
@@ -234,9 +232,7 @@ define(function(requires, exports, module) {
 		return !incomplete;
 	}
 
-	/**
-     checks if a corner has been completed
-    */
+	// checks if a corner has been completed
 	function cornerCompleted(gridNumber) {
 		var n = +gridNumber.substr(3),
 			corners = [1, 3, 7, 9];
@@ -264,7 +260,7 @@ define(function(requires, exports, module) {
 			.style("display", "block");
 	}
 
-	// Called when a photo is successfully retrieved
+	// called when a photo is successfully retrieved
 	function onPhotoDataSuccess(imageData, gridNumber, orientation) {
 		var n = +gridNumber.substr(3),
 			tiles, sel;
@@ -305,11 +301,25 @@ define(function(requires, exports, module) {
 						});
 					showImageAlert("img/line.png", hideAlert);
 				});
+		} else if (columnCompleted(gridNumber)) {
+			tiles = colsMap[n].split("").map(function(d) {
+				return "#box" + d;
+			});
+			sel = tiles.join(",");
+			d3.selectAll(sel).classed("unflip", false);
+			addClassToTiles(sel, "flip")
+				.then(function() {
+					addClassToTiles(tiles.reverse().join(","), "unflip")
+						.then(function() {
+							d3.selectAll(sel).classed("flip", false);
+						});
+					showImageAlert("img/line.png", hideAlert);
+				});
 		}
 	}
 
 	function gotPicture(event) {
-		if (event.target.files.length == 1 && event.target.files[0].type.indexOf("image/") == 0) {
+		if (event.target.files.length == 1 && event.target.files[0].type.indexOf("image/") === 0) {
 			var file = event.target.files[0];
 			EXIF.getData(file, function() {
 				var orientation = EXIF.getTag(this, "Orientation");
@@ -319,6 +329,7 @@ define(function(requires, exports, module) {
 					//console.log(target);
 					onPhotoDataSuccess(target.toDataURL(), currentPhoto, orientation);
 					currentPhoto = "";
+					$(event.target)[0].form.reset(); // reset so we can upload again in the same visit
 				};
 				mpxImage.render(canvas, {
 					maxWidth: imageWidth,
@@ -375,7 +386,7 @@ define(function(requires, exports, module) {
 		// register click handler for tiles
 		$(".tile").on("click", function(event) {
 			if (event.target === this) {
-				// if the name has never been set and user clicks on tile, set the name else take a picture??
+				// if the name has never been set and user clicks on tile, set the name else take a picture
 				var span = $("#" + this.id + " .name");
 				var name = span.html();
 				if (name.trim().length === 0) {
