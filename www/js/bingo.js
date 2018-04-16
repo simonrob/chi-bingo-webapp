@@ -62,17 +62,19 @@ require(["lib/d3.min", "Storage.min"], function (d3, db) {
 			return d;
 		});
 
-		var msg = "Just about to start my %23chi2017 %23bingo!";
+		var msg = "Just about to start my %23chi2018 %23demobingo!";
 		if (people.length > 0) {
 			var names = people.reduce(function (previous, current, index, array) {
 				var sep = ", ";
 				if (index === array.length - 1) {
 					sep = " and ";
 				}
+				previous = people.length > 1 ? previous.replace("Demo ", "Demos ") : previous; // DEMO BINGO
+				current = current.replace("Demo ", ""); // DEMO BINGO
 				return previous ? previous.concat(sep).concat(current) : current;
 			});
 			var verb = people.length > 1 ? " are " : " is ";
-			msg = names + verb + "in my %23chi2017 %23bingo";
+			msg = names + verb + "in my %23chi2018 %23demobingo!";
 		}
 		msg = "https://twitter.com/intent/tweet?text=" + msg.replace(" ", "%20");
 

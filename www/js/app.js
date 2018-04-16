@@ -18,7 +18,14 @@ define(function(requires, exports, module) {
 		height,
 		imageHeight = 250,
 		imageQuality = 80,
-		aboutText = "CHI Bingo is a fun app that aims to increase social activity at CHI.\n\nThe aim is simple — before (or during) the conference, enter nine names of people you'd like to talk to. When you arrive, the race is on to get 'selfie' photos with each of them before the conference ends. Easy!\n\nOnce your grid is complete, you can share it with others.\n\n\nCHI Bingo was inspired by the late Gary Marsden — a CHI veteran and dear friend.",
+		aboutText = "CHI Demo Bingo is a fun app that aims to increase social activity at CHI.\n\nYou have just received nine demo numbers. Your mission, should you choose to accept it, is to find these nine demos and take \'selfie\' photos with each of them at the conference reception on Monday night (making sure the demo number appears in your picture).\n\nOnce your grid is completed, come and show us at the demo prize booth. The first 50 people to complete their bingo card will get a special CHI prize!\n\n\nCHI Bingo was inspired by the late Gary Marsden — a CHI veteran and dear friend.",
+		demos = Array("D100", "D101", "D102", "D103", "D104", "D105", "D106", "D107", "D108", "D109", "D110", "D111", "D112",
+			"D113", "D114", "D115", "D116", "D117", "D200", "D201", "D202", "D203", "D204", "D205", "D206", "D207",
+			"D208", "D209", "D210", "D211", "D300", "D301", "D302", "D303", "D304", "D305", "D306", "D307", "D308",
+			"D309", "D310", "D311", "D312", "D313", "D314", "D315", "D316", "D317", "D318", "D319", "D320", "D321",
+			"D322", "D323", "D324", "D400", "D401", "D402", "D403", "D404", "D405", "D406", "D407", "D408", "D409",
+			"D410", "D411", "D412", "D413", "D414", "D415", "D500", "D501", "D502", "D503", "D504", "D505"),
+		selectedDemos = Array("Demo"),
 		rowsMap = {
 			"1": "123",
 			"2": "123",
@@ -389,20 +396,22 @@ define(function(requires, exports, module) {
 				// if the name has never been set and user clicks on tile, set the name else take a picture
 				var span = $("#" + this.id + " .name");
 				var name = span.html();
-				if (name.trim().length === 0) {
-					setName(this.id);
-				} else {
+				// if (name.trim().length === 0) { // DEMO BINGO
+				// 	setName(this.id); // DEMO BINGO
+				// } else { // DEMO BINGO
 					currentPhoto = this.id;
 					$("#photo-capture").click();
-				}
+				// } // DEMO BINGO
 			}
 		});
 		$("#photo-capture").on("change", gotPicture); // handle file input photos
 
 		// register click handler for the name
-		$(".name").on("click", function(event) {
-			event.stopPropagation(); // stop event propagation so that parent div does not receive event
-			setName(this.parentNode.id);
+		$(".name").on("click", function(event) { // DEMO BINGO
+			// 	event.stopPropagation(); // stop event propagation so that parent div does not receive event // DEMO BINGO
+			// 	setName(this.parentNode.id); // DEMO BINGO
+			currentPhoto = this.parentNode.id;
+			$("#photo-capture").click();
 		});
 
 		// register handler for share and about buttons
@@ -430,18 +439,40 @@ define(function(requires, exports, module) {
 		d3.select("#" + tileId + " .name").html(name).style("background", "rgba(0,0,0,0.4)");
 	}
 
+	function demoSelected(name) { // DEMO BINGO
+		for (var i = 0; i < selectedDemos.length; i++) {
+			if (selectedDemos[i] === name) {
+				return true;
+			}
+		}
+	}
+
 	function loadSavedImages() {
+		var showAboutText = false; // DEMO BINGO
 		d3.selectAll(".tile").each(function() {
 			var id = this.id;
 			var name = db.get(id + "name"),
 				image = db.get(id + "image");
 			if (name) {
 				updateName(id, name);
+			} else { // DEMO BINGO
+				var newName = "Demo";
+				while(demoSelected(newName)) {
+					newName = demos[Math.floor(Math.random()*demos.length)];
+				}
+				selectedDemos.push(newName);
+				newName = "Demo " + newName;
+				db.set(id + "name", newName);
+				updateName(id, newName);
+				showAboutText = true;
 			}
 			if (image) {
 				updateImage(id, image);
 			}
 		});
+		if (showAboutText) {
+			setTimeout(function() { _alert(aboutText, "About");; }, 250); // DEMO BINGO - first load
+		}
 	}
 
 	var app = {		
